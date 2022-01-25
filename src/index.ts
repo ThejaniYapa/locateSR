@@ -18,12 +18,12 @@ function initMap(): void {
     zoom: 10,
   });
 
-  infoWindow = new google.maps.InfoWindow({position: map.getCenter()});
+  //infoWindow = new google.maps.InfoWindow({position: map.getCenter()});
 
   let bannerWindow = new google.maps.InfoWindow({
     content: "Click the map to get Latitude and Longitude",
-    //position: { lat: 7.5270786, lng: 79.86124 },
     position: map.getCenter(),
+    pixelOffset: new google.maps.Size(0,-40),
   });
   bannerWindow.open(map);
 
@@ -49,7 +49,7 @@ function initMap(): void {
     bannerWindow.close();
     bannerWindow = new google.maps.InfoWindow({position: mapsMouseEvent.latLng,});
     bannerWindow.setContent(JSON.stringify(mapsMouseEvent.latLng.toJSON(), null, 2));
-    bannerWindow.open({map,shouldFocus: false,});
+    bannerWindow.open({map,shouldFocus: true,});
     placeMarkerAndPanTo(mapsMouseEvent.latLng, map);
   });
 
@@ -63,12 +63,13 @@ function initMap(): void {
             lng: position.coords.longitude,
           };
           //currentLoc= new google.maps.LatLng(-34.397, 150.644),
-          infoWindow.close();
-          infoWindow.setContent("Location found: "+ pos.lat+"," +pos.lng);
-          infoWindow.setPosition(pos)
-          infoWindow.open({map,shouldFocus: false,});
           map.setCenter(pos);
-          const marker = new google.maps.Marker({position: pos,map: map,});
+          bannerWindow.close();
+          bannerWindow.setContent("Location found: "+ pos.lat+"," +pos.lng);
+          bannerWindow.setPosition(pos)
+          bannerWindow.open({map,shouldFocus: true});
+          
+          const marker = new google.maps.Marker({position: pos,map: map,draggable:true});
           markers.push(marker);
           //placeMarkerAndPanTo(pos, map);
         },
@@ -113,6 +114,7 @@ function placeMarkerAndPanTo(latLng: google.maps.LatLng, map: google.maps.Map) {
   const marker = new google.maps.Marker({
     position: latLng,
     map: map,
+    draggable:true,
   });
   map.panTo(latLng);
   markers.push(marker);
